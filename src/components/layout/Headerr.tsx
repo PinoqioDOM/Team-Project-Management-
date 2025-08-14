@@ -1,42 +1,48 @@
-import Logo from '../../assets/Team.png'
+import { Link } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "../../hooks/useSupabase";
+import { useEffect, useState } from "react";
 
-const Header = () => {
+const Header: React.FC = () => {
+  const [userData, setUserData] = useState<{ gender?: string } | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from("users")
+          .select("gender")
+          .eq("email", user.email)
+          .single();
+        setUserData(data || null);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const avatarSrc = userData?.gender === "male" ? "/male-avatar.png" : "/female-avatar.png";
+
   return (
-    <header className="bg-black border-b border-slate-800 px-4 py-3 flex items-center justify-between shadow-lg">
-      {/* Logo */}
-      <div className="flex items-center space-x-2">
-        <img 
-          src={Logo} 
-          alt="Logo" 
-          className="h-8 w-8 object-contain"
-        />
-        <span className="font-semibold text-lg hidden sm:block text-white">Company Name</span>
-      </div>
-
-      {/* Desktop Navigation */}
-      <nav className="hidden md:flex space-x-6">
-        <a href="#" className="text-slate-400 hover:text-white hover:shadow-md hover:bg-slate-800 px-3 py-2 rounded-lg border border-transparent hover:border-slate-700 transition-all duration-200">Dashboard</a>
-        <a href="#" className="text-slate-400 hover:text-white hover:shadow-md hover:bg-slate-800 px-3 py-2 rounded-lg border border-transparent hover:border-slate-700 transition-all duration-200">Projects</a>
-        <a href="#" className="text-slate-400 hover:text-white hover:shadow-md hover:bg-slate-800 px-3 py-2 rounded-lg border border-transparent hover:border-slate-700 transition-all duration-200">Tasks</a>
+    <header className="bg-gray-900 border-b border-gray-700 px-6 py-4 flex items-center justify-between shadow-md sticky top-0 z-50">
+      <h1 className="text-3xl font-semibold text-white">TeamEngine</h1>
+      <nav className="flex space-x-8">
+        <Link to="/team" className="text-gray-300 hover:text-white transition-colors font-medium">
+          Task
+        </Link>
+        <Link to="/project" className="text-gray-300 hover:text-white transition-colors font-medium">
+          Project
+        </Link>
+        <Link to="/dashboard" className="text-gray-300 hover:text-white transition-colors font-medium">
+          Dashboard
+        </Link>
       </nav>
-
-      {/* Right side */}
-      <div className="flex items-center space-x-3">
-        {/* Theme toggle */}
-        <button className="p-2 rounded-lg border border-slate-800 hover:border-slate-700 hover:bg-slate-800 hover:shadow-md text-slate-400 hover:text-white transition-all duration-200">
-          🌙
-        </button>
-        
-        {/* Mobile menu button */}
-        <button className="md:hidden p-2 rounded-lg border border-slate-800 hover:border-slate-700 hover:bg-slate-800 hover:shadow-md text-slate-400 hover:text-white transition-all duration-200">
-          ☰
-        </button>
-
-        {/* User avatar */}
-        <div className="w-8 h-8 bg-slate-700 rounded-full border border-slate-800 hover:border-slate-600 hover:shadow-md transition-all duration-200 cursor-pointer"></div>
-      </div>
+      <Avatar className="w-12 h-12">
+        <AvatarImage src={avatarSrc} alt="User Avatar" />
+        <AvatarFallback>{userData?.gender?.[0] || "U"}</AvatarFallback>
+      </Avatar>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;
