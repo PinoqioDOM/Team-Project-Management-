@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { supabase } from "../../hooks/useSupabase";
+import { supabase } from "../../libraries/supabase";
 import { useEffect, useState } from "react";
 
 const Header: React.FC = () => {
