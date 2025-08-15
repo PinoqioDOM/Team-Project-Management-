@@ -2,11 +2,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "../../libraries/supabase";
 import { useEffect, useState } from "react";
-import { Session } from "@supabase/supabase-js"; 
+import { Session } from "@supabase/supabase-js";
+
+interface UserData {
+  gender?: string;
+  name?: string;
+}
 
 const Header: React.FC = () => {
-  const [userData, setUserData] = useState<{ gender?: string } | null>(null);
-  const [session, setSession] = useState<Session | null>(null); 
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,7 +22,7 @@ const Header: React.FC = () => {
       if (session) {
         const { data } = await supabase
           .from("users")
-          .select("gender")
+          .select("gender, name")
           .eq("email", session.user.email)
           .single();
         setUserData(data || null);
@@ -59,6 +64,7 @@ const Header: React.FC = () => {
               {userData?.gender?.[0] || "U"}
             </AvatarFallback>
           </Avatar>
+          <span className="text-purple-300 font-medium">{userData?.name || "User"}</span>
           <button 
             onClick={handleLogout} 
             className="text-purple-300 hover:text-white transition-colors font-medium cursor-pointer"

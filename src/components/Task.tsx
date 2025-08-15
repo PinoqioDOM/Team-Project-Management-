@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../libraries/supabase";
 import { Button } from "./ui/button";
 import CreateTask from "./CreateTask";
+import EditTask from "./EditTask"; 
 
 interface Task {
   id: string;
@@ -23,8 +24,10 @@ const Tasks: React.FC<TasksProps> = ({ projectId, shouldRefresh }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); 
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null); 
+
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -48,7 +51,7 @@ const Tasks: React.FC<TasksProps> = ({ projectId, shouldRefresh }) => {
       }
     };
     fetchTasks();
-  }, [projectId, shouldRefresh]); 
+  }, [projectId, shouldRefresh]);
 
   if (loading) {
     return <div className="text-center text-purple-400 mt-4">Loading tasks...</div>;
@@ -72,11 +75,37 @@ const Tasks: React.FC<TasksProps> = ({ projectId, shouldRefresh }) => {
     fetchTasksOnCreate();
   };
 
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      const { error } = await supabase
+        .from("tasks")
+        .delete()
+        .eq("id", taskId);
+
+      if (error) {
+        throw error;
+      }
+      setTasks(tasks.filter(task => task.id !== taskId));
+    } catch (err: unknown) {
+      setError((err as Error).message);
+    }
+  };
+
+  const handleEditTask = (task: Task) => {
+    setSelectedTask(task);
+    setIsEditModalOpen(true);
+  };
+  
+  const handleTaskUpdated = () => {
+    setIsEditModalOpen(false);
+    handleTaskCreated(); 
+  };
+
   return (
     <div className="mt-4">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-xl font-semibold text-purple-400">Tasks</h3>
-        <Button onClick={() => setIsModalOpen(true)} className="bg-purple-600 hover:bg-purple-700 text-white font-bold">
+        <Button onClick={() => setIsCreateModalOpen(true)} className="bg-purple-600 hover:bg-purple-700 text-white font-bold">
           Create Task
         </Button>
       </div>
@@ -85,8 +114,28 @@ const Tasks: React.FC<TasksProps> = ({ projectId, shouldRefresh }) => {
         <div className="space-y-4">
           {tasks.map((task) => (
             <div key={task.id} className="bg-gray-900 border border-purple-600 rounded-lg p-4">
-              <h4 className="text-lg font-bold text-purple-300">{task.title}</h4>
-              <p className="text-purple-400 text-sm mt-1">{task.description}</p>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="text-lg font-bold text-purple-300">{task.title}</h4>
+                  <p className="text-purple-400 text-sm mt-1">{task.description}</p>
+                </div>
+                <div className="flex space-x-2">
+                  <Button 
+                    onClick={() => handleEditTask(task)}
+                    variant="ghost" 
+                    className="p-1 text-blue-400 hover:text-blue-500"
+                  >
+                    Edit
+                  </Button>
+                  <Button 
+                    onClick={() => handleDeleteTask(task.id)} 
+                    variant="ghost" 
+                    className="p-1 text-red-400 hover:text-red-500"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
               <div className="flex items-center space-x-2 mt-2 text-sm text-purple-500">
                 <span>Status: {task.status}</span>
               </div>
@@ -99,10 +148,18 @@ const Tasks: React.FC<TasksProps> = ({ projectId, shouldRefresh }) => {
 
       <CreateTask 
         projectId={projectId} 
-        open={isModalOpen} 
-        onOpenChange={setIsModalOpen} 
+        open={isCreateModalOpen} 
+        onOpenChange={setIsCreateModalOpen} 
         onTaskCreated={handleTaskCreated}
       />
+      {selectedTask && (
+        <EditTask
+          task={selectedTask}
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          onTaskUpdated={handleTaskUpdated}
+        />
+      )}
     </div>
   );
 };
