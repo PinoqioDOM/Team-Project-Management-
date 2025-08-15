@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../libraries/supabase";
 import Tasks from "./Task";
 import { Button } from "./ui/button";
+import EditProject from "./EditProject"; 
 
 interface Project {
   id: string;
@@ -18,6 +19,8 @@ const Projects: React.FC<ProjectsProps> = ({ shouldRefresh }) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null); 
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -60,6 +63,21 @@ const Projects: React.FC<ProjectsProps> = ({ shouldRefresh }) => {
       setError((err as Error).message);
     }
   };
+  
+
+  const handleEdit = (project: Project) => {
+    setSelectedProject(project);
+    setIsModalOpen(true);
+  };
+  
+
+  const handleProjectUpdated = () => {
+    setIsModalOpen(false);
+    
+    fetchProjects(); 
+  };
+  
+  const fetchProjects = async () => {};
 
   if (loading) {
     return <div className="text-center text-purple-400">Loading projects...</div>;
@@ -84,7 +102,7 @@ const Projects: React.FC<ProjectsProps> = ({ shouldRefresh }) => {
             <Tasks projectId={project.id} />
 
             <div className="flex space-x-2 mt-4">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold">
+              <Button onClick={() => handleEdit(project)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold">
                 Edit
               </Button>
               <Button 
@@ -98,6 +116,14 @@ const Projects: React.FC<ProjectsProps> = ({ shouldRefresh }) => {
           </div>
         ))}
       </div>
+      {selectedProject && (
+        <EditProject 
+          project={selectedProject} 
+          open={isModalOpen} 
+          onOpenChange={setIsModalOpen} 
+          onProjectUpdated={handleProjectUpdated} 
+        />
+      )}
     </div>
   );
 };

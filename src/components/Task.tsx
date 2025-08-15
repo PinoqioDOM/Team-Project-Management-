@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../libraries/supabase";
+import { Button } from "./ui/button";
+import CreateTask from "./CreateTask";
 
 interface Task {
   id: string;
@@ -14,13 +16,15 @@ interface Task {
 
 interface TasksProps {
   projectId: string;
+  shouldRefresh?: boolean;
 }
 
-const Tasks: React.FC<TasksProps> = ({ projectId }) => {
+const Tasks: React.FC<TasksProps> = ({ projectId, shouldRefresh }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -43,9 +47,8 @@ const Tasks: React.FC<TasksProps> = ({ projectId }) => {
         setLoading(false);
       }
     };
-
     fetchTasks();
-  }, [projectId]);
+  }, [projectId, shouldRefresh]); 
 
   if (loading) {
     return <div className="text-center text-purple-400 mt-4">Loading tasks...</div>;
@@ -55,9 +58,29 @@ const Tasks: React.FC<TasksProps> = ({ projectId }) => {
     return <div className="text-center text-red-500 mt-4">Error: {error}</div>;
   }
 
+  const handleTaskCreated = () => {
+    const fetchTasksOnCreate = async () => {
+      const { data, error } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("project_id", projectId);
+      
+      if (!error && data) {
+        setTasks(data as Task[]);
+      }
+    };
+    fetchTasksOnCreate();
+  };
+
   return (
     <div className="mt-4">
-      <h3 className="text-xl font-semibold text-purple-400 mb-2">Tasks for this Project</h3>
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-xl font-semibold text-purple-400">Tasks</h3>
+        <Button onClick={() => setIsModalOpen(true)} className="bg-purple-600 hover:bg-purple-700 text-white font-bold">
+          Create Task
+        </Button>
+      </div>
+      
       {tasks.length > 0 ? (
         <div className="space-y-4">
           {tasks.map((task) => (
@@ -73,6 +96,13 @@ const Tasks: React.FC<TasksProps> = ({ projectId }) => {
       ) : (
         <p className="text-purple-400">No tasks found for this project.</p>
       )}
+
+      <CreateTask 
+        projectId={projectId} 
+        open={isModalOpen} 
+        onOpenChange={setIsModalOpen} 
+        onTaskCreated={handleTaskCreated}
+      />
     </div>
   );
 };

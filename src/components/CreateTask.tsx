@@ -1,0 +1,105 @@
+import { useState } from "react";
+import { supabase } from "../libraries/supabase";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+interface CreateTaskProps {
+  projectId: string;
+  onOpenChange: (open: boolean) => void;
+  onTaskCreated: () => void;
+  open: boolean;
+}
+
+const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTaskCreated, open }) => {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      const { error } = await supabase
+        .from("tasks")
+        .insert([{
+          title,
+          description,
+          status: "pending", 
+          project_id: projectId,
+          created_by: user.id,
+          assigned_to: user.id, 
+        }]);
+
+      if (error) {
+        throw error;
+      }
+
+      setTitle("");
+      setDescription("");
+      onTaskCreated();
+      onOpenChange(false);
+      
+    } catch (err: unknown) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="bg-black text-white border-purple-500">
+        <DialogHeader>
+          <DialogTitle className="text-purple-400">Create New Task</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <p className="text-red-400 text-sm">{error}</p>}
+          <div>
+            <label htmlFor="title" className="block text-sm font-medium text-purple-300">
+              Task Title
+            </label>
+            <Input
+              id="title"
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="w-full bg-gray-800 text-purple-200 border-purple-500 mt-1"
+            />
+          </div>
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-purple-300">
+              Description
+            </label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              required
+              className="w-full bg-gray-800 text-purple-200 border border-purple-500 rounded-md p-2 mt-1"
+            />
+          </div>
+          <Button 
+            type="submit" 
+            disabled={loading}
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold"
+          >
+            {loading ? "Creating..." : "Create Task"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default CreateTask;
