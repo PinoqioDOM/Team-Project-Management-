@@ -22,8 +22,8 @@ export const useAuth = () => {
       if (session) {
         const { data } = await supabase
           .from("users")
-          .select(" name, role")
-          .eq("email", session.user.email)
+          .select("name, role")
+          .eq("id", session.user.id) 
           .single();
         setUserData(data || null);
       } else {
