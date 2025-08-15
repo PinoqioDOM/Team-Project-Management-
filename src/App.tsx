@@ -9,11 +9,14 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Header />
+        <Header /> 
         <Routes>
           <Route path="/login" element={<Login />} />
+          
           <Route path="/dashboard" element={<ProtectedRoute><Board /></ProtectedRoute>} />
+
           <Route path="/" element={<Navigate to="/login" replace />} /> 
+          
           <Route path="*" element={<Navigate to="/login" replace />} /> 
         </Routes>
       </BrowserRouter>
