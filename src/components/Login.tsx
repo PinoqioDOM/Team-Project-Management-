@@ -48,17 +48,17 @@ const Login: React.FC = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[425px] p-6 bg-white rounded shadow-md">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Login</DialogTitle>
-          <DialogDescription className="text-center">
+      <DialogContent className="sm:max-w-[425px] p-6 bg-black border border-purple-500 rounded-md shadow-2xl shadow-purple-500/50 [&>button>svg]:w-6 [&>button>svg]:h-6 [&>button]:text-white [&>button]:hover:text-purple-400 [&>button]:cursor-pointer">
+        <DialogHeader className="text-center">
+          <DialogTitle className="text-2xl font-bold text-purple-400">Login</DialogTitle>
+          <DialogDescription className="text-purple-300">
             Enter your credentials to access your dashboard.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleLogin} className="grid gap-4 py-4">
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="email" className="text-right">
+          {error && <p className="text-red-400 text-center bg-red-900/50 p-2 rounded-md border border-red-500">{error}</p>}
+          <div className="grid gap-2">
+            <label htmlFor="email" className="text-sm font-medium text-purple-400">
               Email
             </label>
             <Input
@@ -67,11 +67,11 @@ const Login: React.FC = () => {
               placeholder="email@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="col-span-3"
+              className="w-full bg-gray-800 text-purple-200 placeholder:text-purple-400 border-purple-500"
             />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <label htmlFor="password" className="text-right">
+          <div className="grid gap-2">
+            <label htmlFor="password" className="text-sm font-medium text-purple-400">
               Password
             </label>
             <Input
@@ -80,10 +80,12 @@ const Login: React.FC = () => {
               placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="col-span-3"
+              className="w-full bg-gray-800 text-purple-200 placeholder:text-purple-400 border-purple-500"
             />
           </div>
-          <Button type="submit" className="w-full mt-4">Login</Button>
+          <Button type="submit" className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold cursor-pointer">
+            შესვლა
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
