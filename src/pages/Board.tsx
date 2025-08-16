@@ -1,21 +1,11 @@
-import { createContext } from "react";
-import { Session } from "@supabase/supabase-js";
+import React from 'react';
 
-interface UserData {
- gender?: string;
- name?: string;
- role?: string;
- id?: string;
-}
+const Board: React.FC = () => {
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold text-purple-400">Dashboard</h1>
+    </div>
+  );
+};
 
-interface AuthContextType {
- session: Session | null;
- userData: UserData | null;
- loading: boolean;
-}
-
-export const AuthContext = createContext<AuthContextType>({
- session: null,
- userData: null,
- loading: true
-});
+export default Board;

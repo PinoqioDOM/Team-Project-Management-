@@ -1,11 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthProvider";
 import Login from "./components/Login";
 import Board from "./pages/Board";
 import Header from "./components/layout/Headerr";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CreateProject from "./components/CreateProject";
 import CreateTask from "./components/CreateTask";
+import Home from "./pages/Home";
 
 const App: React.FC = () => {
   const handleProjectCreated = (projectId: string) => {
@@ -26,7 +27,7 @@ const App: React.FC = () => {
         <Header />
         <Routes>
           <Route path="/login" element={<Login />} />
-
+          <Route path="/home" element={<Home />} />
           <Route
             path="/dashboard"
             element={
@@ -35,25 +36,34 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-
+          
           <Route
             path="/create-project"
             element={
-              <ProtectedRoute requiredRole="admin">
-                <CreateProject onProjectCreated={handleProjectCreated} open={false} onOpenChange={handleOpenChange} />
+              <ProtectedRoute requireAdmin={true}>
+                <CreateProject 
+                  onProjectCreated={handleProjectCreated} 
+                  open={false} 
+                  onOpenChange={handleOpenChange} 
+                />
               </ProtectedRoute>
             }
           />
-
+          
           <Route
             path="/create-task"
             element={
-              <ProtectedRoute requiredRole="admin">
-                <CreateTask onTaskCreated={handleTaskCreated} onOpenChange={handleOpenChange} open={false} projectId={""} />
+              <ProtectedRoute requireAdmin={true}>
+                <CreateTask 
+                  onTaskCreated={handleTaskCreated} 
+                  onOpenChange={handleOpenChange} 
+                  open={false} 
+                  projectId="" 
+                />
               </ProtectedRoute>
             }
           />
-
+          
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>

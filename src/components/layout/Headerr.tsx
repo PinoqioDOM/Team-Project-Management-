@@ -19,14 +19,14 @@ const Header: React.FC = () => {
 
   if (loading) {
     return (
-      <header className="bg-transparent border-b border-purple-500/50 px-6 py-4 flex items-center justify-between shadow-lg shadow-purple-500/10 sticky top-0 z-50">
+      <header className="bg-black border-b border-purple-500/50 px-6 py-4 flex items-center justify-between shadow-lg shadow-purple-500/10 sticky top-0 z-50">
         <h1 className="text-3xl font-semibold text-purple-400">TeamEngine</h1>
       </header>
     );
   }
 
   return (
-    <header className="bg-transparent border-b border-purple-500/50 px-6 py-4 flex items-center justify-between shadow-lg shadow-purple-500/10 sticky top-0 z-50">
+    <header className="bg-black border-b border-purple-500/50 px-6 py-4 flex items-center justify-between shadow-lg shadow-purple-500/10 sticky top-0 z-50">
       <h1 className="text-3xl font-semibold text-purple-400">OctariNox</h1>
       <nav className="flex space-x-8">
         {session && (
