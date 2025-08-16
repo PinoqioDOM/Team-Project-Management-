@@ -10,6 +10,8 @@ export interface Task {
   assigned_to: string | null;
   created_at: string;
   updated_at: string;
+  assigned_user?: { name: string } | null;
+  created_user?: { name: string } | null;
 }
 
 export const taskService = {
@@ -28,7 +30,7 @@ export const taskService = {
     return data || [];
   },
 
-  async create(task: Omit<Task, 'id' | 'created_at' | 'updated_at'>) {
+  async create(task: Omit<Task, 'id' | 'created_at' | 'updated_at' | 'assigned_user' | 'created_user'>) {
     const { data, error } = await supabase
       .from('tasks')
       .insert([task])
