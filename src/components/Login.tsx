@@ -60,7 +60,7 @@ const Login: React.FC = () => {
         <DialogHeader className="text-center">
           <DialogTitle className="text-2xl font-bold text-purple-400">Login</DialogTitle>
           <DialogDescription className="text-purple-300">
-            Enter your credentials to access your dashboard.
+            Enter your information to access your dashboard.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleLogin} className="grid gap-4 py-4">
