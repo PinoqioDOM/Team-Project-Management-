@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../libraries/supabase";
-import Tasks from "./Task";
 import { Button } from "./ui/button";
 import EditProject from "./EditProject";
-import { Dialog } from "@/components/ui/dialog"; // Only import Dialog, as DialogTrigger is not used directly here
+import { Dialog } from "@/components/ui/dialog"; 
 
 interface Project {
   id: string;
@@ -19,7 +18,11 @@ interface ProjectsProps {
   openCreateTaskModal: (projectId: string) => void;
 }
 
-const Projects: React.FC<ProjectsProps> = ({ projects: initialProjects, userRole, currentUserId, openCreateTaskModal }) => {
+const Projects: React.FC<ProjectsProps> = ({ 
+  projects: initialProjects, 
+  userRole, 
+  openCreateTaskModal 
+}) => {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,18 +107,24 @@ const Projects: React.FC<ProjectsProps> = ({ projects: initialProjects, userRole
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {projects.length > 0 ? (
           projects.map((project) => (
-            <div key={project.id} className="bg-black border border-purple-500 rounded-lg p-6 shadow-md shadow-purple-500/20">
+            <div 
+              key={project.id} 
+              className="bg-black border border-purple-500 rounded-lg p-6 shadow-md shadow-purple-500/20"
+            >
               <h3 className="text-xl font-bold text-purple-400 mb-2">{project.name}</h3>
               <p className="text-purple-300 mb-4">{project.description}</p>
               <span className="inline-block bg-purple-600 text-white text-xs font-semibold px-2 py-1 rounded-full">
                 {project.status}
               </span>
 
-              <Tasks projectId={project.id} userRole={userRole} currentUserId={currentUserId} />
+              {/* Tasks will be added later */}
 
               {userRole === "admin" && (
                 <div className="flex space-x-2 mt-4">
-                  <Button onClick={() => handleEdit(project)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold">
+                  <Button 
+                    onClick={() => handleEdit(project)} 
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
+                  >
                     Edit
                   </Button>
                   <Button
