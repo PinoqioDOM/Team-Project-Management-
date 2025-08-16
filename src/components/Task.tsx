@@ -110,7 +110,7 @@ const Tasks: React.FC<TasksProps> = ({ projectId, userRole, currentUserId }) => 
     setIsEditModalOpen(true);
   };
 
-  const handleTaskUpdated = () => { // Removed taskId parameter
+  const handleTaskUpdated = () => { 
     setIsEditModalOpen(false);
     fetchTasks();
   };

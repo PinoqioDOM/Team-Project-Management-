@@ -1,56 +1,46 @@
-import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { supabase } from "../libraries/supabase";
-import { Session } from "@supabase/supabase-js";
+import { useAuth } from "../hooks/useAuth";
+import { usePermissions } from "../hooks/usePermissions";
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
-  requiredRole?: "admin" | "member";
+ children: React.ReactNode;
+ requireAdmin?: boolean;
+ fallback?: React.ReactNode;
+ redirectTo?: string;
 }
 
-const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+const ProtectedRoute = ({ 
+ children, 
+ requireAdmin = false, 
+ fallback,
+ redirectTo = "/login" 
+}: ProtectedRouteProps) => {
+ const { userData, loading } = useAuth();
+ const { isAdmin, isMember } = usePermissions();
 
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            setSession({
-              ...session,
-              user: {
-                ...user,
-                role: user.app_metadata.role,
-              },
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Failed to get session:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+ if (loading) {
+   return <div className="text-white text-center mt-20">Loading...</div>;
+ }
 
-    checkSession();
-  }, []);
+ if (!userData) {
+   return <Navigate to={redirectTo} replace />;
+ }
 
-  if (loading) {
-    return <div className="text-white text-center mt-20">Loading...</div>;
-  }
+ if (requireAdmin && !isAdmin) {
+   if (fallback) {
+     return <>{fallback}</>;
+   }
+   return <Navigate to="/" replace />;
+ }
 
-  if (!session) {
-    return <Navigate to="/login" replace />;
-  }
+ if (!isAdmin && !isMember) {
+   if (fallback) {
+     return <>{fallback}</>;
+   }
+   return <Navigate to="/" replace />;
+ }
 
-  if (requiredRole && session.user.role !== requiredRole) {
-    return <Navigate to="/" replace />; 
-  }
-
-  return <>{children}</>;
+ return <>{children}</>;
 };
 
 export default ProtectedRoute;
