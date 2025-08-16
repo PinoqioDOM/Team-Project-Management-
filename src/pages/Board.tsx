@@ -1,27 +1,21 @@
-// src/pages/Board.tsx
-import { useState } from "react";
-import Projects from "../components/Projects";
-import CreateProject from "../components/CreateProject";
+import { createContext } from "react";
+import { Session } from "@supabase/supabase-js";
 
-const Board = () => {
-  const [shouldRefresh, setShouldRefresh] = useState(false);
+interface UserData {
+  gender?: string;
+  name?: string;
+  role?: string;
+  id?: string;
+}
 
-  const handleProjectCreated = () => {
-    setShouldRefresh(prev => !prev);
-  };
+interface AuthContextType {
+  session: Session | null;
+  userData: UserData | null;
+  loading: boolean;
+}
 
-  return (
-    <div className="min-h-screen bg-black text-white">
-      <main className="p-8">
-        <h1 className="text-4xl font-bold text-center text-purple-400 mb-8">Projects Dashboard</h1>
-        
-        <CreateProject onProjectCreated={handleProjectCreated} />
-
-        <Projects shouldRefresh={shouldRefresh} />
-
-      </main>
-    </div>
-  );
-};
-
-export default Board;
+export const AuthContext = createContext<AuthContextType>({ 
+  session: null, 
+  userData: null, 
+  loading: true 
+});

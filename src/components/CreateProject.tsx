@@ -4,10 +4,14 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
 interface CreateProjectProps {
-    onProjectCreated: () => void;
+  // შეიცვალა: onProjectCreated ახლა იღებს projectId (string) არგუმენტად
+  onProjectCreated: (projectId: string) => void;
+  // დაემატა open და onOpenChange props-ები App.tsx-ის შესაბამისად
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated }) => {
+const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenChange }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("planned");
@@ -22,20 +26,30 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated }) => {
     setSuccess(null);
 
     try {
-      const { error } = await supabase
+      // Supabase-ის insert ოპერაციას შეუძლია დააბრუნოს შექმნილი ჩანაწერი
+      const { data, error } = await supabase
         .from("projects")
-        .insert([{ name, description, status }]);
+        .insert([{ name, description, status }])
+        .select('id'); // აუცილებელია 'id'-ის არჩევა, რათა დააბრუნოს შექმნილი ID
 
       if (error) {
         throw error;
       }
 
-      setSuccess("Project created successfully!");
-      setName("");
-      setDescription("");
-      setStatus("planned");
-      
-      onProjectCreated();
+      // შეამოწმეთ, დააბრუნა თუ არა Supabase-მა მონაცემები
+      if (data && data.length > 0) {
+        const newProjectId = data[0].id; // მიიღეთ შექმნილი პროექტის ID
+        setSuccess("Project created successfully!");
+        setName("");
+        setDescription("");
+        setStatus("planned");
+
+        // გამოიძახეთ onProjectCreated ახალი პროექტის ID-ით
+        onProjectCreated(newProjectId);
+        onOpenChange(false); // დახურეთ მოდალი/დიალოგი წარმატების შემდეგ, თუ open/onOpenChange გამოიყენება მოდალისთვის
+      } else {
+        throw new Error("პროექტის შექმნა ვერ მოხერხდა: ID არ დაბრუნებულა.");
+      }
 
     } catch (err: unknown) {
       setError((err as Error).message);
@@ -91,8 +105,8 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated }) => {
             <option value="completed">Completed</option>
           </select>
         </div>
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           disabled={loading}
           className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold"
         >

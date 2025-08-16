@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 interface CreateTaskProps {
   projectId: string;
   onOpenChange: (open: boolean) => void;
-  onTaskCreated: () => void;
+  onTaskCreated: (taskId: string) => void;
   open: boolean;
 }
 
@@ -28,26 +28,33 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
         throw new Error("User not authenticated");
       }
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("tasks")
         .insert([{
           title,
           description,
-          status: "pending", 
+          status: "pending",
           project_id: projectId,
           created_by: user.id,
-          assigned_to: user.id, 
-        }]);
+          assigned_to: user.id,
+        }])
+        .select('id'); 
 
       if (error) {
         throw error;
       }
 
-      setTitle("");
-      setDescription("");
-      onTaskCreated();
-      onOpenChange(false);
       
+      if (data && data.length > 0) {
+        const newTaskId = data[0].id; 
+        setTitle("");
+        setDescription("");
+        onTaskCreated(newTaskId); 
+        onOpenChange(false);
+      } else {
+        throw new Error("Task creation failed: ID not returned.");
+      }
+
     } catch (err: unknown) {
       setError((err as Error).message);
     } finally {
@@ -89,8 +96,8 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
               className="w-full bg-gray-800 text-purple-200 border border-purple-500 rounded-md p-2 mt-1"
             />
           </div>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={loading}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold"
           >

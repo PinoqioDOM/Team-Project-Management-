@@ -14,7 +14,8 @@ interface Task {
 interface EditTaskProps {
   task: Task;
   onOpenChange: (open: boolean) => void;
-  onTaskUpdated: () => void;
+  // Changed: onTaskUpdated now expects taskId (string) as an argument
+  onTaskUpdated: (taskId: string) => void;
   open: boolean;
 }
 
@@ -25,6 +26,7 @@ const EditTask: React.FC<EditTaskProps> = ({ task, onOpenChange, onTaskUpdated, 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Update local state when the 'task' prop changes
   useEffect(() => {
     setTitle(task.title);
     setDescription(task.description);
@@ -40,14 +42,14 @@ const EditTask: React.FC<EditTaskProps> = ({ task, onOpenChange, onTaskUpdated, 
       const { error } = await supabase
         .from("tasks")
         .update({ title, description, status })
-        .eq("id", task.id);
+        .eq("id", task.id); // Update the specific task by its ID
 
       if (error) {
         throw error;
       }
 
-      onTaskUpdated();
-      onOpenChange(false);
+      onTaskUpdated(task.id); // Pass the updated task's ID back to the parent
+      onOpenChange(false); // Close the dialog on successful update
     } catch (err: unknown) {
       setError((err as Error).message);
     } finally {

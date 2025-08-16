@@ -1,19 +1,35 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "../libraries/supabase";
+import { Session } from "@supabase/supabase-js";
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const [session, setSession] = useState<boolean | null>(null);
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requiredRole?: "admin" | "member";
+}
+
+const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        setSession(!!session);
+        if (session) {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            setSession({
+              ...session,
+              user: {
+                ...user,
+                role: user.app_metadata.role,
+              },
+            });
+          }
+        }
       } catch (error) {
         console.error("Failed to get session:", error);
-        setSession(false);
       } finally {
         setLoading(false);
       }
@@ -28,6 +44,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (!session) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (requiredRole && session.user.role !== requiredRole) {
+    return <Navigate to="/" replace />; 
   }
 
   return <>{children}</>;

@@ -61,14 +61,14 @@ const Header: React.FC = () => {
                 onClick={handleLogout}
                 className="block px-4 py-2 text-sm text-purple-300 hover:text-white transition-colors w-full text-left cursor-pointer"
               >
-                Logout
+                გამოსვლა
               </button>
             </div>
           )}
         </div>
       ) : (
         <Link to="/login" className="text-purple-300 hover:text-white transition-colors font-medium">
-          Login
+          შესვლა
         </Link>
       )}
     </header>
