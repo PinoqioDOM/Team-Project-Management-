@@ -58,9 +58,9 @@ const Login: React.FC = () => {
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px] p-6 bg-black border border-purple-500 rounded-md shadow-2xl shadow-purple-500/50 [&>button>svg]:w-6 [&>button>svg]:h-6 [&>button]:text-white [&>button]:hover:text-purple-400 [&>button]:cursor-pointer">
         <DialogHeader className="text-center">
-          <DialogTitle className="text-2xl font-bold text-purple-400">Login</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-purple-400">კაბინეტი</DialogTitle>
           <DialogDescription className="text-purple-300">
-            Enter your information to access your dashboard.
+          🖇️შეიყვანე ინფორმაცია!
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleLogin} className="grid gap-4 py-4">
@@ -91,7 +91,7 @@ const Login: React.FC = () => {
               className="w-full bg-gray-800 text-purple-200 placeholder:text-purple-400 border-purple-500"
             />
           </div>
-          <Button type="submit" className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold cursor-pointer">
+          <Button type="submit" className="w-full mt-4 bg-purple-500 hover:bg-green-800 text-white font-bold cursor-pointer">
             შესვლა
           </Button>
         </form>

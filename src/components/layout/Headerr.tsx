@@ -67,9 +67,9 @@ const Header: React.FC = () => {
           )}
         </div>
       ) : (
-        <Link to="/login" className="text-purple-300 hover:text-white transition-colors font-medium">
+        <p className="text-purple-300 hover:text-white transition-colors font-medium">
           შესვლა
-        </Link>
+        </p>
       )}
     </header>
   );
