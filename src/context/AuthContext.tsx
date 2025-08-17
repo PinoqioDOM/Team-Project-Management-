@@ -2,7 +2,6 @@ import { createContext } from "react";
 import { Session } from "@supabase/supabase-js";
 
 interface UserData {
-  gender?: string;
   name?: string;
   role?: string;
   id?: string;

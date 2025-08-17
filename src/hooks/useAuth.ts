@@ -3,7 +3,6 @@ import { supabase } from "../libraries/supabase";
 import { Session } from "@supabase/supabase-js";
 
 interface UserData {
-gender?: string; // This property is not used
 name?: string;
 role?: string;
 id?: string;
@@ -23,7 +22,7 @@ useEffect(() => {
   if (session) {
    const { data, error } = await supabase
     .from("users")
-    .select("name, role, id") // Removed 'gender' from this select statement
+    .select("name, role, id") 
     .eq("id", session.user.id)
     .single();
 

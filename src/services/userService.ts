@@ -4,7 +4,6 @@ export interface User {
   id: string;
   name: string;
   role: 'admin' | 'member';
-  gender?: string;
 }
 
 export const userService = {
