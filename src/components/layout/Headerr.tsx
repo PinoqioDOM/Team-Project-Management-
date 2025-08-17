@@ -26,7 +26,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className="bg-black border-b border-purple-500/50 px-6 py-4 flex items-center justify-between shadow-lg shadow-purple-500/10 sticky top-0 z-50">
+    <header className="bg-black border-b border-purple-500/50 px-6 py-3 flex items-center justify-between shadow-lg shadow-purple-500/10 sticky top-0 z-50">
       <h1 className="text-3xl font-semibold text-purple-400">OctariNox</h1>
       <nav className="flex space-x-8">
         {session && (
