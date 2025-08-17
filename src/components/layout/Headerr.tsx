@@ -31,10 +31,10 @@ const Header: React.FC = () => {
       <nav className="flex space-x-8">
         {session && (
           <>
-            <Link to="/team" className="text-purple-300 hover:text-white transition-colors font-medium">
+            <Link to="/tasks" className="text-purple-300 hover:text-white transition-colors font-medium">
               Task
             </Link>
-            <Link to="/project" className="text-purple-300 hover:text-white transition-colors font-medium">
+            <Link to="/projects" className="text-purple-300 hover:text-white transition-colors font-medium">
               Project
             </Link>
             <Link to="/dashboard" className="text-purple-300 hover:text-white transition-colors font-medium">
