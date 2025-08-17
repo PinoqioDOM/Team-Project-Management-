@@ -44,7 +44,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onStatusUpdate, onAssi
               onClick={() => onStatusUpdate(task.id, 'todo')}
               disabled={task.status === 'todo'}
             >
-              Todo
+              To Do
             </Button>
             <Button
               size="sm"
@@ -52,7 +52,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onStatusUpdate, onAssi
               onClick={() => onStatusUpdate(task.id, 'in_progress')}
               disabled={task.status === 'in_progress'}
             >
-              Progress
+              In Progress
             </Button>
             <Button
               size="sm"
@@ -60,7 +60,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onStatusUpdate, onAssi
               onClick={() => onStatusUpdate(task.id, 'completed')}
               disabled={task.status === 'completed'}
             >
-              Done
+              Completed
             </Button>
           </div>
         )}

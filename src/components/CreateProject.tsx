@@ -4,9 +4,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
 interface CreateProjectProps {
-  // შეიცვალა: onProjectCreated ახლა იღებს projectId (string) არგუმენტად
   onProjectCreated: (projectId: string) => void;
-  // დაემატა open და onOpenChange props-ები App.tsx-ის შესაბამისად
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -26,27 +24,24 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenC
     setSuccess(null);
 
     try {
-      // Supabase-ის insert ოპერაციას შეუძლია დააბრუნოს შექმნილი ჩანაწერი
       const { data, error } = await supabase
         .from("projects")
         .insert([{ name, description, status }])
-        .select('id'); // აუცილებელია 'id'-ის არჩევა, რათა დააბრუნოს შექმნილი ID
-
+        .select('id'); 
       if (error) {
         throw error;
       }
 
-      // შეამოწმეთ, დააბრუნა თუ არა Supabase-მა მონაცემები
       if (data && data.length > 0) {
-        const newProjectId = data[0].id; // მიიღეთ შექმნილი პროექტის ID
+        const newProjectId = data[0].id; 
         setSuccess("Project created successfully!");
         setName("");
         setDescription("");
         setStatus("planned");
 
-        // გამოიძახეთ onProjectCreated ახალი პროექტის ID-ით
+        
         onProjectCreated(newProjectId);
-        onOpenChange(false); // დახურეთ მოდალი/დიალოგი წარმატების შემდეგ, თუ open/onOpenChange გამოიყენება მოდალისთვის
+        onOpenChange(false);
       } else {
         throw new Error("პროექტის შექმნა ვერ მოხერხდა: ID არ დაბრუნებულა.");
       }
