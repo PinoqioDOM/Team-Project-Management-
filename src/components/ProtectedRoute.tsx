@@ -16,7 +16,7 @@ const ProtectedRoute = ({
   redirectTo = "/login" 
 }: ProtectedRouteProps) => {
   const { userData, loading } = useAuth();
-  const { isAdmin } = usePermissions();
+  const { isAdmin, isMember } = usePermissions();
 
   if (loading) {
     return <div className="text-white text-center mt-20">Loading...</div>;
@@ -28,6 +28,13 @@ const ProtectedRoute = ({
 
   if (requireAdmin && !isAdmin) {
     if (fallback) {
+      return <>{fallback}</>;
+    }
+    return <Navigate to="/home" replace />;
+  }
+
+  if (!isAdmin && !isMember) {
+     if (fallback) {
       return <>{fallback}</>;
     }
     return <Navigate to="/home" replace />;
