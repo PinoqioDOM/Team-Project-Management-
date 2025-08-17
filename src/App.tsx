@@ -4,23 +4,11 @@ import Login from "./components/Login";
 import Board from "./pages/Board";
 import Header from "./components/layout/Headerr";
 import ProtectedRoute from "./components/ProtectedRoute";
-import CreateProject from "./components/CreateProject";
-import CreateTask from "./components/CreateTask";
 import Home from "./pages/Home";
+import ProjectsPage from "./pages/ProjectsPage"; 
+import TaskPage from "./pages/TaskPage"; 
 
 const App: React.FC = () => {
-  const handleProjectCreated = (projectId: string) => {
-    console.log("პროექტი შეიქმნა ID-ით:", projectId);
-  };
-
-  const handleTaskCreated = (taskId: string) => {
-    console.log("Task შეიქმნა ID-ით:", taskId);
-  };
-
-  const handleOpenChange = (open: boolean) => {
-    console.log("კომპონენტის ხილვადობა შეიცვალა:", open);
-  };
-
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -36,30 +24,21 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          
+
           <Route
-            path="/create-project"
+            path="/projects"
             element={
               <ProtectedRoute requireAdmin={true}>
-                <CreateProject 
-                  onProjectCreated={handleProjectCreated} 
-                  open={false} 
-                  onOpenChange={handleOpenChange} 
-                />
+                <ProjectsPage />
               </ProtectedRoute>
             }
           />
-          
+
           <Route
-            path="/create-task"
+            path="/tasks"
             element={
-              <ProtectedRoute requireAdmin={true}>
-                <CreateTask 
-                  onTaskCreated={handleTaskCreated} 
-                  onOpenChange={handleOpenChange} 
-                  open={false} 
-                  projectId="" 
-                />
+              <ProtectedRoute>
+                <TaskPage />
               </ProtectedRoute>
             }
           />

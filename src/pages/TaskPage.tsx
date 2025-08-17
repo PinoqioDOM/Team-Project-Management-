@@ -1,9 +1,129 @@
+import { useState, useEffect } from "react";
+import { supabase } from "../libraries/supabase";
+import { Button } from "../components/ui/button";
+import { TaskCard } from "../components/TaskCard";
+import CreateTask from "../components/CreateTask";
+import EditTask from "../components/EditTask";
 
-
-const TaskPage = () => {
-  return (
-    <div>TaskPage</div>
-  )
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: "todo" | "in_progress" | "completed";
+  project_id: string;
+  created_by: string;
+  assigned_to: string;
+  created_at: string;
+  updated_at: string;
 }
 
-export default TaskPage
+const TaskPage: React.FC = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  const fetchTasks = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("tasks")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      setError(error.message);
+      setTasks([]);
+    } else {
+      setTasks(data as Task[]);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const handleCreateTask = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const handleEditTask = (task: Task) => {
+    setSelectedTask(task);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      const { error } = await supabase
+        .from("tasks")
+        .delete()
+        .eq("id", taskId);
+
+      if (error) {
+        setError(error.message);
+      } else {
+        fetchTasks();
+      }
+    }
+  };
+
+  const handleTaskUpdated = () => {
+    fetchTasks();
+    setIsEditModalOpen(false);
+  };
+
+  if (loading) {
+    return <div className="text-white text-center mt-20">Loading tasks...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center mt-20">Error: {error}</div>;
+  }
+
+  return (
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-white">Tasks</h1>
+        <Button onClick={handleCreateTask} className="bg-purple-600 hover:bg-purple-700 text-white">
+          Create New Task
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {tasks.length > 0 ? (
+          tasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              onStatusUpdate={() => {}} 
+              onAssign={() => handleEditTask(task)}
+              onDelete={() => handleDeleteTask(task.id)} 
+            />
+          ))
+        ) : (
+          <p className="text-gray-400">No tasks found.</p>
+        )}
+      </div>
+
+      <CreateTask
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        onTaskCreated={fetchTasks}
+        projectId="" 
+      />
+
+      {selectedTask && (
+        <EditTask
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          task={selectedTask}
+          onTaskUpdated={handleTaskUpdated}
+        />
+      )}
+    </div>
+  );
+};
+
+export default TaskPage;
