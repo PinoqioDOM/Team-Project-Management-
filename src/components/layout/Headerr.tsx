@@ -27,7 +27,9 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-black border-b border-purple-500/50 px-6 py-3 flex items-center justify-between shadow-lg shadow-purple-500/10 sticky top-0 z-50">
-      <h1 className="text-3xl font-semibold text-purple-400">OctariNox</h1>
+      <Link to="/home">
+        <h1 className="text-3xl font-semibold text-purple-400">OctariNox</h1>
+      </Link>
       <nav className="flex space-x-8">
         {session && (
           <>
@@ -67,9 +69,9 @@ const Header: React.FC = () => {
           )}
         </div>
       ) : (
-        <p className="text-purple-300 hover:text-white transition-colors font-medium">
+        <Link to="/login" className="text-purple-300 hover:text-white transition-colors font-medium">
           შესვლა
-        </p>
+        </Link>
       )}
     </header>
   );

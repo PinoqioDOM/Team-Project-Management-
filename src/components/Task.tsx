@@ -56,7 +56,6 @@ const Tasks: React.FC<TasksProps> = ({ projectId, userRole, currentUserId }) => 
         throw error;
       }
 
-      // Refresh tasks after update
       fetchTasks();
     } catch (err: unknown) {
       setError((err as Error).message);
@@ -64,10 +63,25 @@ const Tasks: React.FC<TasksProps> = ({ projectId, userRole, currentUserId }) => 
   };
 
   const handleAssign = async (taskId: string) => {
-    // This would typically open a modal or dropdown to select a user
-    // For now, we'll just log the action
     console.log("Assign task:", taskId, "Current user:", currentUserId, "User role:", userRole);
-    // You can implement the actual assignment logic here
+  };
+  
+  const handleDelete = async (taskId: string) => {
+    try {
+      const { error } = await supabase
+        .from("tasks")
+        .delete()
+        .eq("id", taskId);
+      
+      if (error) {
+        throw error;
+      }
+      
+      fetchTasks();
+
+    } catch (err: unknown) {
+      setError((err as Error).message);
+    }
   };
 
   if (loading) {
@@ -92,6 +106,7 @@ const Tasks: React.FC<TasksProps> = ({ projectId, userRole, currentUserId }) => 
             task={task}
             onStatusUpdate={handleStatusUpdate}
             onAssign={handleAssign}
+            onDelete={() => handleDelete(task.id)}
           />
         ))}
       </div>

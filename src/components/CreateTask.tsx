@@ -24,7 +24,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [users, setUsers] = useState<User[]>([]);
-  const [assignedTo, setAssignedTo] = useState<string | undefined>(undefined); // ტიპი შეიცვალა
+  const [assignedTo, setAssignedTo] = useState<string | undefined>(undefined); 
 
   const { userData } = useAuth();
   const { isAdmin } = usePermissions();
@@ -46,7 +46,6 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
       if (isAdmin) {
         fetchUsers();
       }
-      // შევამოწმოთ userData-ის არსებობა, სანამ მის id-ს გამოვიყენებთ
       if (userData?.id) { 
         setAssignedTo(userData.id);
       }
