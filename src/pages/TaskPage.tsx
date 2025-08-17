@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../libraries/supabase";
 import { Button } from "../components/ui/button";
 import { TaskCard } from "../components/TaskCard";
 import CreateTask from "../components/CreateTask";
 import EditTask from "../components/EditTask";
+import { useAuth } from "../hooks/useAuth";
+import { usePermissions } from "../hooks/usePermissions";
 
 interface Task {
   id: string;
@@ -25,12 +27,27 @@ const TaskPage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-  const fetchTasks = async () => {
+  const { userData } = useAuth();
+  const { isAdmin } = usePermissions();
+
+  const fetchTasks = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    let query = supabase
       .from("tasks")
       .select("*")
       .order("created_at", { ascending: false });
+
+    if (!isAdmin) {
+      if (userData?.id) {
+        query = query.eq("assigned_to", userData.id);
+      } else {
+        setTasks([]);
+        setLoading(false);
+        return;
+      }
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       setError(error.message);
@@ -39,11 +56,13 @@ const TaskPage: React.FC = () => {
       setTasks(data as Task[]);
     }
     setLoading(false);
-  };
+  }, [isAdmin, userData]);
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (userData) {
+      fetchTasks();
+    }
+  }, [userData, fetchTasks, isCreateModalOpen, isEditModalOpen]);
 
   const handleCreateTask = () => {
     setIsCreateModalOpen(true);
@@ -97,9 +116,9 @@ const TaskPage: React.FC = () => {
             <TaskCard
               key={task.id}
               task={task}
-              onStatusUpdate={() => {}} 
+              onStatusUpdate={() => {}}
               onAssign={() => handleEditTask(task)}
-              onDelete={() => handleDeleteTask(task.id)} 
+              onDelete={() => handleDeleteTask(task.id)}
             />
           ))
         ) : (
@@ -111,7 +130,7 @@ const TaskPage: React.FC = () => {
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
         onTaskCreated={fetchTasks}
-        projectId="" 
+        projectId=""
       />
 
       {selectedTask && (

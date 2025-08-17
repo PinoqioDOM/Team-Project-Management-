@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../libraries/supabase";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useAuth } from "../hooks/useAuth";
+import { usePermissions } from "../hooks/usePermissions";
 
 interface CreateTaskProps {
   projectId: string;
@@ -11,11 +13,45 @@ interface CreateTaskProps {
   open: boolean;
 }
 
+interface User {
+  id: string;
+  email: string;
+}
+
 const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTaskCreated, open }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const [assignedTo, setAssignedTo] = useState<string | undefined>(undefined); // ტიპი შეიცვალა
+
+  const { userData } = useAuth();
+  const { isAdmin } = usePermissions();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("id, email");
+
+      if (error) {
+        console.error("Error fetching users:", error);
+      } else {
+        setUsers(data as User[]);
+      }
+    };
+
+    if (open) {
+      if (isAdmin) {
+        fetchUsers();
+      }
+      // შევამოწმოთ userData-ის არსებობა, სანამ მის id-ს გამოვიყენებთ
+      if (userData?.id) { 
+        setAssignedTo(userData.id);
+      }
+    }
+  }, [open, isAdmin, userData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,8 +59,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
     setError(null);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      if (!userData) {
         throw new Error("User not authenticated");
       }
 
@@ -33,28 +68,27 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
         .insert([{
           title,
           description,
-          status: "pending",
+          status: "todo",
           project_id: projectId,
-          created_by: user.id,
-          assigned_to: user.id,
+          created_by: userData.id,
+          assigned_to: assignedTo || userData.id,
         }])
-        .select('id'); 
+        .select('id');
 
       if (error) {
         throw error;
       }
 
-      
       if (data && data.length > 0) {
-        const newTaskId = data[0].id; 
+        const newTaskId = data[0].id;
         setTitle("");
         setDescription("");
-        onTaskCreated(newTaskId); 
+        setAssignedTo(userData.id);
+        onTaskCreated(newTaskId);
         onOpenChange(false);
       } else {
         throw new Error("Task creation failed: ID not returned.");
       }
-
     } catch (err: unknown) {
       setError((err as Error).message);
     } finally {
@@ -96,6 +130,26 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
               className="w-full bg-gray-800 text-purple-200 border border-purple-500 rounded-md p-2 mt-1"
             />
           </div>
+          {isAdmin && (
+            <div>
+              <label htmlFor="assignedTo" className="block text-sm font-medium text-purple-300">
+                Assign To
+              </label>
+              <select
+                id="assignedTo"
+                value={assignedTo || ""}
+                onChange={(e) => setAssignedTo(e.target.value)}
+                className="w-full bg-gray-800 text-purple-200 border border-purple-500 rounded-md p-2 mt-1"
+              >
+                <option value="">Select user...</option>
+                {users.map(user => (
+                  <option key={user.id} value={user.id}>
+                    {user.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <Button
             type="submit"
             disabled={loading}
