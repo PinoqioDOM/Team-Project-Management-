@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "./ui/badge";
+import CommentsSection from "./CommentsSection"; 
 
 interface ProjectCardProps {
   project: {
@@ -46,6 +47,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDelete }) 
               Delete
             </Button>
           </div>
+        </div>
+        
+        <div className="mt-4">
+          <CommentsSection parentId={project.id} parentType="project" />
         </div>
       </CardContent>
     </Card>
