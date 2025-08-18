@@ -3,8 +3,8 @@ import { useAuth } from './useAuth';
 export const usePermissions = () => {
   const { userData } = useAuth();
   
-  const isAdmin = userData?.role === 'admin';
-  const isMember = userData?.role === 'member';
+  const isAdmin = userData?.role === 'Admin';
+  const isMember = userData?.role === 'Member';
   
   const canCreateProject = isAdmin;
   const canEditProject = isAdmin;

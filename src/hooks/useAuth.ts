@@ -3,59 +3,61 @@ import { supabase } from "../libraries/supabase";
 import { Session } from "@supabase/supabase-js";
 
 interface UserData {
-name?: string;
-role?: string;
-id?: string;
+ name?: string;
+ role?: string;
+ id?: string;
 }
 
 export const useAuth = () => {
-const [session, setSession] = useState<Session | null>(null);
-const [userData, setUserData] = useState<UserData | null>(null);
-const [loading, setLoading] = useState(true);
+ const [session, setSession] = useState<Session | null>(null);
+ const [userData, setUserData] = useState<UserData | null>(null);
+ const [loading, setLoading] = useState(true);
 
-useEffect(() => {
- const fetchSessionAndUser = async () => {
-  setLoading(true);
-  const { data: { session } } = await supabase.auth.getSession();
-  setSession(session);
+ useEffect(() => {
+   const fetchSessionAndUser = async () => {
+     setLoading(true);
+     const { data: { session } } = await supabase.auth.getSession();
+     setSession(session);
 
-  if (session) {
-   const { data, error } = await supabase
-    .from("users")
-    .select("name, role, id") 
-    .eq("id", session.user.id)
-    .single();
+     if (session) {
+       const { data, error } = await supabase
+         .from("users")
+         .select("name, role, id")
+         .eq("id", session.user.id)
+         .single();
 
-   if (error) {
-    console.error("Error fetching user data:", error);
-    setUserData(null);
-   } else {
-    setUserData(data || null);
-   }
-  } else {
-   setUserData(null);
-  }
-  setLoading(false);
- };
+       if (error) {
+         console.error("Error fetching user data:", error);
+         console.error("User ID:", session.user.id);
+         setUserData(null);
+       } else {
+         console.log("Fetched user data:", data);
+         setUserData(data || null);
+       }
+     } else {
+       setUserData(null);
+     }
+     setLoading(false);
+   };
 
- fetchSessionAndUser();
+   fetchSessionAndUser();
 
- const { data: { subscription } } = supabase.auth.onAuthStateChange(
-  (_event, session) => {
-   setSession(session);
-   if (session) {
-    fetchSessionAndUser();
-   } else {
-    setUserData(null);
-    setLoading(false);
-   }
-  }
- );
+   const { data: { subscription } } = supabase.auth.onAuthStateChange(
+     (_event, session) => {
+       setSession(session);
+       if (session) {
+         fetchSessionAndUser();
+       } else {
+         setUserData(null);
+         setLoading(false);
+       }
+     }
+   );
 
- return () => {
-  subscription.unsubscribe();
- };
-}, []);
+   return () => {
+     subscription.unsubscribe();
+   };
+ }, []);
 
-return { session, userData, loading };
+ return { session, userData, loading };
 };

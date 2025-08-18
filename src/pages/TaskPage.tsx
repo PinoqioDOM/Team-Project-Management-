@@ -88,6 +88,25 @@ const TaskPage: React.FC = () => {
     }
   };
 
+  const handleStatusUpdate = async (taskId: string, status: Task['status']) => {
+    try {
+      const { error } = await supabase
+        .from("tasks")
+        .update({ status })
+        .eq("id", taskId);
+
+      if (error) {
+        console.error("Error updating task status:", error.message);
+        setError(error.message); 
+      } else {
+        fetchTasks(); 
+      }
+    } catch (err: unknown) {
+      console.error("Error updating task status:", err);
+      setError((err as Error).message);
+    }
+  };
+
   const handleTaskUpdated = () => {
     fetchTasks();
     setIsEditModalOpen(false);
@@ -116,7 +135,7 @@ const TaskPage: React.FC = () => {
             <TaskCard
               key={task.id}
               task={task}
-              onStatusUpdate={() => {}}
+              onStatusUpdate={handleStatusUpdate}
               onAssign={() => handleEditTask(task)}
               onDelete={() => handleDeleteTask(task.id)}
             />
@@ -136,7 +155,7 @@ const TaskPage: React.FC = () => {
       {selectedTask && (
         <EditTask
           open={isEditModalOpen}
-          onOpenChange={setIsEditModalOpen}
+          onOpenChange={setIsEditModalOpen} 
           task={selectedTask}
           onTaskUpdated={handleTaskUpdated}
         />

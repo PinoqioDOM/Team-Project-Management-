@@ -1,6 +1,5 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { usePermissions } from "../hooks/usePermissions";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,14 +8,13 @@ interface ProtectedRouteProps {
   redirectTo?: string;
 }
 
-const ProtectedRoute = ({ 
-  children, 
-  requireAdmin = false, 
+const ProtectedRoute = ({
+  children,
+  requireAdmin = false,
   fallback,
-  redirectTo = "/login" 
+  redirectTo = "/login",
 }: ProtectedRouteProps) => {
   const { userData, loading } = useAuth();
-  const { isAdmin, isMember } = usePermissions();
 
   if (loading) {
     return <div className="text-white text-center mt-20">Loading...</div>;
@@ -26,6 +24,9 @@ const ProtectedRoute = ({
     return <Navigate to={redirectTo} replace />;
   }
 
+  const isAdmin = userData.role === 'Admin';
+  const isMember = userData.role === 'Member';
+
   if (requireAdmin && !isAdmin) {
     if (fallback) {
       return <>{fallback}</>;
@@ -34,7 +35,7 @@ const ProtectedRoute = ({
   }
 
   if (!isAdmin && !isMember) {
-     if (fallback) {
+    if (fallback) {
       return <>{fallback}</>;
     }
     return <Navigate to="/home" replace />;
