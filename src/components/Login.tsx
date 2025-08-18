@@ -38,7 +38,7 @@ const Login: React.FC = () => {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       setIsOpen(false);
-      navigate("/dashboard");
+      navigate("/home");
     } catch (err: unknown) {
       setError((err as Error).message || "Invalid credentials");
     }

@@ -15,7 +15,7 @@ interface CreateTaskProps {
 
 interface User {
   id: string;
-  email: string;
+  name: string;
 }
 
 const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTaskCreated, open }) => {
@@ -31,26 +31,26 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const { data, error } = await supabase
-        .from("users")
-        .select("id, email");
+      if (isAdmin) {
+        const { data, error } = await supabase
+          .from("users")
+          .select("id, name");
 
-      if (error) {
-        console.error("Error fetching users:", error);
-      } else {
-        setUsers(data as User[]);
+        if (error) {
+          console.error("Error fetching users:", error);
+        } else {
+          setUsers(data as User[]);
+        }
       }
     };
 
     if (open) {
-      if (isAdmin) {
-        fetchUsers();
-      }
+      fetchUsers();
       if (userData?.id) { 
-        setAssignedTo(userData.id);
+        setAssignedTo(userData.id); // საწყისად საკუთარი ID
       }
     }
-  }, [open, isAdmin, userData]);
+  }, [open, userData, isAdmin]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,7 +143,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
                 <option value="">Select user...</option>
                 {users.map(user => (
                   <option key={user.id} value={user.id}>
-                    {user.email}
+                    {user.name}
                   </option>
                 ))}
               </select>
