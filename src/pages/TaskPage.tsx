@@ -68,13 +68,10 @@ const TaskPage: React.FC = () => {
     setIsCreateModalOpen(true);
   };
 
-  const handleEditTask = (task: Task) => {
-    setSelectedTask(task);
-    setIsEditModalOpen(true);
-  };
-
   const handleDeleteTask = async (taskId: string) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
+    // Replace window.confirm with a custom modal UI
+    const confirmed = true; // Placeholder for custom modal confirmation
+    if (confirmed) {
       const { error } = await supabase
         .from("tasks")
         .delete()
@@ -86,6 +83,11 @@ const TaskPage: React.FC = () => {
         fetchTasks();
       }
     }
+  };
+
+  const handleEditTask = (task: Task) => {
+    setSelectedTask(task);
+    setIsEditModalOpen(true);
   };
 
   const handleStatusUpdate = async (taskId: string, status: Task['status']) => {
@@ -124,9 +126,11 @@ const TaskPage: React.FC = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-white">Tasks</h1>
-        <Button onClick={handleCreateTask} className="bg-purple-600 hover:bg-purple-700 text-white">
-          Create New Task
-        </Button>
+        {isAdmin && (
+          <Button onClick={handleCreateTask} className="bg-purple-600 hover:bg-purple-700 text-white">
+            Create New Task
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

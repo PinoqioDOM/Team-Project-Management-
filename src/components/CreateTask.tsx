@@ -47,7 +47,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
     if (open) {
       fetchUsers();
       if (userData?.id) { 
-        setAssignedTo(userData.id); // საწყისად საკუთარი ID
+        setAssignedTo(userData.id); 
       }
     }
   }, [open, userData, isAdmin]);
