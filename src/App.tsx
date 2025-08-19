@@ -28,7 +28,7 @@ const App: React.FC = () => {
           <Route
             path="/projects"
             element={
-              <ProtectedRoute requireAdmin={true}>
+              <ProtectedRoute>
                 <ProjectsPage />
               </ProtectedRoute>
             }
