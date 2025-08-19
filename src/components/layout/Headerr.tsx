@@ -11,6 +11,7 @@ const Header: React.FC = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
+    setIsMenuOpen(false);
   };
 
   const toggleMenu = () => {
@@ -30,7 +31,9 @@ const Header: React.FC = () => {
       <Link to="/home">
         <h1 className="text-3xl font-semibold text-purple-400">OctariNox</h1>
       </Link>
-      <nav className="flex space-x-8">
+
+      {/* Desktop Navigation Links - Shown on md and above, hidden below md */}
+      <nav className="hidden md:flex space-x-8">
         {session && (
           <>
             <Link to="/tasks" className="text-purple-300 hover:text-white transition-colors font-medium">
@@ -45,20 +48,62 @@ const Header: React.FC = () => {
           </>
         )}
       </nav>
+
+      {/* User Info and Menu Toggle (Hamburger for mobile, User Initial for desktop) */}
       {session ? (
         <div className="flex items-center space-x-4 relative">
-          <div className="flex flex-col items-end">
+          {/* User Name and Role (Desktop only, shown on md and above) */}
+          <div className="hidden md:flex flex-col items-end">
             <span className="text-purple-300 font-medium">{userData?.name || "User"}</span>
             <span className="text-sm text-purple-500">{userData?.role || "Member"}</span>
           </div>
-          <div
+          
+          <button
             onClick={toggleMenu}
-            className="w-10 h-10 bg-purple-600 rounded-full cursor-pointer flex items-center justify-center text-white font-bold"
+            className="w-10 h-10 bg-purple-600 rounded-full cursor-pointer flex items-center justify-center text-white font-bold text-xl"
+            aria-label="Toggle menu"
           >
-            {userData?.name ? userData.name.charAt(0) : "U"}
-          </div>
+            <span className="hidden md:inline">{userData?.name ? userData.name.charAt(0) : "U"}</span>
+            <span className="md:hidden">☰</span>
+          </button>
+
+          {/* Dropdown Menu */}
           {isMenuOpen && (
-            <div className="absolute top-12 right-0 bg-gray-800 rounded-md shadow-lg p-2 z-10">
+            <div className="absolute top-12 right-0 bg-gray-800 rounded-md shadow-lg p-2 z-10 w-48 flex flex-col items-start">
+              {/* User Info in Mobile Menu (only shows on mobile/tablet screens) */}
+              <div className="md:hidden flex flex-col items-start px-4 py-2 w-full">
+                <span className="text-purple-300 font-medium">{userData?.name || "User"}</span>
+                <span className="text-sm text-purple-500">{userData?.role || "Member"}</span>
+                <hr className="border-t border-slate-700 w-full my-2" />
+              </div>
+
+              {session && ( 
+                <div className="md:hidden flex flex-col items-start w-full"> 
+                  <Link
+                    to="/tasks"
+                    className="block px-4 py-2 text-sm text-purple-300 hover:text-white transition-colors w-full text-left"
+                    onClick={() => setIsMenuOpen(false)} 
+                  >
+                    Task
+                  </Link>
+                  <Link
+                    to="/projects"
+                    className="block px-4 py-2 text-sm text-purple-300 hover:text-white transition-colors w-full text-left"
+                    onClick={() => setIsMenuOpen(false)} 
+                  >
+                    Project
+                  </Link>
+                  <Link
+                    to="/dashboard"
+                    className="block px-4 py-2 text-sm text-purple-300 hover:text-white transition-colors w-full text-left"
+                    onClick={() => setIsMenuOpen(false)} 
+                  >
+                    Dashboard
+                  </Link>
+                  <hr className="border-t border-slate-700 w-full my-2" />
+                </div>
+              )}
+              
               <button
                 onClick={handleLogout}
                 className="block px-4 py-2 text-sm text-purple-300 hover:text-white transition-colors w-full text-left cursor-pointer"

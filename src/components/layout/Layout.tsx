@@ -5,14 +5,16 @@ import Footer from './Footer'
 
 const Layout = () => {
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Headerr />
 
-      <Outlet />
-
+      <main className="flex-grow">
+        <Outlet />
+      </main>
+      
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;
