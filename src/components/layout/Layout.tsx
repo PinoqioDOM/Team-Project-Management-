@@ -1,10 +1,16 @@
+import { Outlet } from 'react-router-dom'
 import Headerr from './Headerr'
+import Footer from './Footer'
 
 
 const Layout = () => {
   return (
-    <div className="d-flex min-h-screen bg-black">
+    <div>
       <Headerr />
+
+      <Outlet />
+
+      <Footer />
     </div>
   )
 }
