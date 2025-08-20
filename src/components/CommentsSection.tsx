@@ -103,7 +103,7 @@ const CommentsSection = ({ parentId, parentType }: CommentsSectionProps) => {
   }
 
   return (
-    <div className="bg-gray-800  rounded-lg">
+    <div className="rounded-lg">
       <h3 className="text-xl font-semibold mb-4 text-white">Comments</h3>
       <div className="space-y-4 max-h-80 overflow-y-auto">
         {comments.length > 0 ? (

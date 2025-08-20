@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../libraries/supabase";
 import ProjectCard from "../components/ProjectCard";
 import CreateProject from "../components/CreateProject";
@@ -14,7 +14,7 @@ interface Project {
   status: "planned" | "in-progress" | "completed";
 }
 
-const ProjectsPage: React.FC = () => {
+const ProjectsPage: React.FC = React.memo(() => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +45,7 @@ const ProjectsPage: React.FC = () => {
     if (userData) {
       fetchProjects();
     }
-  }, [userData, fetchProjects, isCreateModalOpen, isEditModalOpen]);
+  }, [userData, fetchProjects]);
 
   const handleCreateProject = () => {
     setIsCreateModalOpen(true);
@@ -122,6 +122,6 @@ const ProjectsPage: React.FC = () => {
       )}
     </div>
   );
-};
+});
 
 export default ProjectsPage;
