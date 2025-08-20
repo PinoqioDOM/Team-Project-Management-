@@ -36,6 +36,7 @@ const ProjectCard: React.FC<ProjectCardProps> = React.memo(({ project, onEdit, o
       w-full
       max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl
       mx-auto
+      cursor-pointer
     ">
       <CardHeader className="p-3 sm:p-4 border-b border-purple-700/30">
         <CardTitle className="text-base sm:text-lg font-semibold text-purple-300">

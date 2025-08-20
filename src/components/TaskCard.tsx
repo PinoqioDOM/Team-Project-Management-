@@ -39,6 +39,7 @@ export const TaskCard: React.FC<TaskCardProps> = React.memo(({ task, onStatusUpd
    w-full
    max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl
    mx-auto
+   cursor-pointer
   ">
    <CardHeader className="p-3 sm:p-4 border-b border-purple-700/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
     <CardTitle className="text-base sm:text-lg font-semibold text-purple-300 truncate cursor-pointer w-full sm:w-auto sm:mr-2">
