@@ -4,6 +4,11 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { usePermissions } from "../hooks/usePermissions";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"; 
+import { Calendar } from "@/components/ui/calendar"; 
+import { format } from "date-fns"; 
+import { CalendarIcon } from "lucide-react"; 
+import { cn } from "@/libraries/utils"
 
 interface CreateProjectProps {
   onProjectCreated: (projectId: string) => void;
@@ -14,10 +19,10 @@ interface CreateProjectProps {
 const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenChange, open }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("planned");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined); // შეცვლილია
 
   const { isAdmin } = usePermissions();
 
@@ -36,7 +41,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenC
     try {
       const { data, error } = await supabase
         .from("projects")
-        .insert([{ name, description, status }])
+        .insert([{ name, description, due_date: dueDate }]) // შეცვლილია
         .select('id'); 
       if (error) {
         throw error;
@@ -47,7 +52,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenC
         setSuccess("Project created successfully!");
         setName("");
         setDescription("");
-        setStatus("planned");
+        setDueDate(undefined); // განახლებულია
         onProjectCreated(newProjectId);
         onOpenChange(false);
       } else {
@@ -96,20 +101,33 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenC
               className="w-full bg-gray-800 text-purple-200 border border-purple-500 rounded-md p-2 mt-1"
             />
           </div>
+          {/* აქ ემატება კალენდარი */}
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-purple-300">
-              Status
+            <label className="block text-sm font-medium text-purple-300">
+              ბოლო ვადა
             </label>
-            <select
-              id="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-full bg-gray-800 text-purple-200 border border-purple-500 rounded-md p-2 mt-1"
-            >
-              <option value="planned">Planned</option>
-              <option value="in-progress">In Progress</option>
-              <option value="completed">Completed</option>
-            </select>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal bg-gray-800 text-purple-200 border-purple-500 mt-1",
+                    !dueDate && "text-purple-500"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dueDate ? format(dueDate, "PPP") : <span>აირჩიე თარიღი</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-gray-800 text-purple-200 border-purple-500">
+                <Calendar
+                  mode="single"
+                  selected={dueDate}
+                  onSelect={setDueDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
           <Button
             type="submit"
