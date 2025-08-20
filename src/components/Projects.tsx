@@ -117,8 +117,6 @@ const Projects: React.FC<ProjectsProps> = ({
                 {project.status}
               </span>
 
-              {/* Tasks will be added later */}
-
               {userRole === "admin" && (
                 <div className="flex space-x-2 mt-4">
                   <Button 

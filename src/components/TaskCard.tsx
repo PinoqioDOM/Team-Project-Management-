@@ -2,9 +2,9 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { usePermissions } from "../hooks/usePermissions"; // იმპორტის გზა შეცვლილია შეფარდებით გზაზე
+import { usePermissions } from "../hooks/usePermissions";
 import { Task } from "../services/taskService";
-import CommentsSection from "./CommentsSection"; // იმპორტის გზა შეცვლილია შეფარდებით გზაზე
+import CommentsSection from "./CommentsSection";
 
 interface TaskCardProps {
  task: Task;
@@ -29,25 +29,28 @@ export const TaskCard: React.FC<TaskCardProps> = React.memo(({ task, onStatusUpd
   <Card className="
    bg-gray-900 
    border border-purple-600/50 
-   rounded-xl 
+   rounded-lg 
    shadow-xl 
    shadow-purple-900/40 
    hover:shadow-purple-700/60 
    transition-all duration-300 
    hover:scale-[1.02]
-   flex flex-col h-full
+   flex  h-full
+   w-full
+   max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl
+   mx-auto
   ">
-   <CardHeader className="p-4 border-b border-purple-700/30 flex flex-row items-center justify-between">
-    <CardTitle className="text-lg font-semibold text-purple-300 truncate mr-2 cursor-pointer">
+   <CardHeader className="p-3 sm:p-4 border-b border-purple-700/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+    <CardTitle className="text-base sm:text-lg font-semibold text-purple-300 truncate cursor-pointer w-full sm:w-auto sm:mr-2">
      {task.title}
     </CardTitle>
-    <Badge className={`${getStatusColor(task.status)} px-3 py-1 text-xs rounded-full font-medium cursor-pointer`}>
+    <Badge className={`${getStatusColor(task.status)} px-2 sm:px-3 py-1 text-xs rounded-full font-medium cursor-pointer shrink-0`}>
      {task.status.replace('_', ' ')}
     </Badge>
    </CardHeader>
-   <CardContent className="p-4 flex-grow flex flex-col justify-between">
+   <CardContent className="p-3 sm:p-4 flex-grow flex flex-col justify-between">
     <div>
-     <p className="text-gray-400 text-sm mb-3 overflow-hidden text-ellipsis max-h-16 cursor-pointer">
+     <p className="text-gray-400 text-xs sm:text-sm mb-3 overflow-hidden text-ellipsis max-h-12 sm:max-h-16 cursor-pointer leading-tight">
       {task.description}
      </p>
      <p className="text-gray-400 text-xs mb-4 cursor-pointer">
@@ -56,10 +59,10 @@ export const TaskCard: React.FC<TaskCardProps> = React.memo(({ task, onStatusUpd
     </div>
     
     {canUpdateTaskStatus && (
-     <div className="flex flex-wrap gap-2 mt-auto pt-2 border-t border-gray-700/50">
+     <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 mt-auto pt-2 border-t border-gray-700/50">
       <Button
        size="sm"
-       className="bg-gray-700 hover:bg-gray-600 text-gray-200 border-gray-600 rounded-md flex-1 min-w-[70px] cursor-pointer"
+       className="bg-gray-700 hover:bg-gray-600 text-gray-200 border-gray-600 rounded-md flex-1 min-w-0 cursor-pointer text-xs sm:text-sm py-2"
        onClick={() => onStatusUpdate(task.id, 'todo')}
        disabled={task.status === 'todo'}
       >
@@ -67,7 +70,7 @@ export const TaskCard: React.FC<TaskCardProps> = React.memo(({ task, onStatusUpd
       </Button>
       <Button
        size="sm"
-       className="bg-blue-700 hover:bg-blue-600 text-white rounded-md flex-1 min-w-[70px] cursor-pointer"
+       className="bg-blue-700 hover:bg-blue-600 text-white rounded-md flex-1 min-w-0 cursor-pointer text-xs sm:text-sm py-2"
        onClick={() => onStatusUpdate(task.id, 'in_progress')}
        disabled={task.status === 'in_progress'}
       >
@@ -75,7 +78,7 @@ export const TaskCard: React.FC<TaskCardProps> = React.memo(({ task, onStatusUpd
       </Button>
       <Button
        size="sm"
-       className="bg-green-700 hover:bg-green-600 text-white rounded-md flex-1 min-w-[70px] cursor-pointer"
+       className="bg-green-700 hover:bg-green-600 text-white rounded-md flex-1 min-w-0 cursor-pointer text-xs sm:text-sm py-2"
        onClick={() => onStatusUpdate(task.id, 'completed')}
        disabled={task.status === 'completed'}
       >
@@ -85,10 +88,10 @@ export const TaskCard: React.FC<TaskCardProps> = React.memo(({ task, onStatusUpd
     )}
     
     {canEditTask && (
-     <div className="mt-2 flex flex-col gap-2 pt-2 border-t border-gray-700/50"> 
+     <div className="mt-2 flex flex-col gap-1 sm:gap-2 pt-2 border-t border-gray-700/50"> 
       <Button
        size="sm"
-       className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-md cursor-pointer"
+       className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-md cursor-pointer text-xs sm:text-sm py-2"
        onClick={() => onAssign(task.id)}
       >
        Assign
@@ -96,7 +99,7 @@ export const TaskCard: React.FC<TaskCardProps> = React.memo(({ task, onStatusUpd
       <Button
        size="sm"
        variant="destructive" 
-       className="w-full bg-red-600 hover:bg-red-700 text-white rounded-md cursor-pointer"
+       className="w-full bg-red-600 hover:bg-red-700 text-white rounded-md cursor-pointer text-xs sm:text-sm py-2"
        onClick={() => onDelete(task.id)} 
       >
        Delete
@@ -104,7 +107,7 @@ export const TaskCard: React.FC<TaskCardProps> = React.memo(({ task, onStatusUpd
      </div>
     )}
 
-    <div className="mt-4 pt-4 border-t border-gray-700/50 cursor-pointer">
+    <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-700/50 cursor-pointer">
      <CommentsSection parentId={task.id} parentType="task" />
     </div>
    </CardContent>

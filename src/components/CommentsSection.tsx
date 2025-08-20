@@ -95,46 +95,46 @@ const CommentsSection = ({ parentId, parentType }: CommentsSectionProps) => {
   }, [parentId, parentType, fetchComments]);
 
   if (loading) {
-    return <div className="text-white">Loading comments...</div>;
+    return <div className="text-white text-sm sm:text-base">Loading comments...</div>;
   }
 
   if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
+    return <div className="text-red-500 text-sm sm:text-base">Error: {error}</div>;
   }
 
   return (
     <div className="rounded-lg">
-      <h3 className="text-xl font-semibold mb-4 text-white">Comments</h3>
-      <div className="space-y-4 max-h-80 overflow-y-auto">
+      <h3 className="text-base sm:text-xl font-semibold mb-3 sm:mb-4 text-white">Comments</h3>
+      <div className="space-y-2 sm:space-y-4 max-h-60 sm:max-h-80 overflow-y-auto">
         {comments.length > 0 ? (
           comments.map((comment) => (
-            <div key={comment.id} className="bg-gray-700 p-3 rounded-md">
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-medium text-white">
+            <div key={comment.id} className="bg-gray-700 p-2 sm:p-3 rounded-md">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-1 gap-1">
+                <span className="font-medium text-white text-sm sm:text-base">
                   {comment.users[0]?.name || "Unknown User"}
                 </span>
-                <span className="text-sm text-gray-400">
+                <span className="text-xs sm:text-sm text-gray-400">
                   {new Date(comment.created_at).toLocaleString()}
                 </span>
               </div>
-              <p className="text-gray-300">{comment.comment_text}</p>
+              <p className="text-gray-300 text-sm sm:text-base leading-snug break-words">{comment.comment_text}</p>
             </div>
           ))
         ) : (
-          <p className="text-gray-400">No comments yet.</p>
+          <p className="text-gray-400 text-sm sm:text-base">No comments yet.</p>
         )}
       </div>
-      <div className="mt-4">
+      <div className="mt-3 sm:mt-4">
         <textarea
-          className="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 resize-none"
-          rows={3}
+          className="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 resize-none text-sm sm:text-base"
+          rows={2}
           placeholder="Add a comment..."
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         />
         <button
           onClick={addComment}
-          className="mt-2 w-full p-2 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-colors"
+          className="mt-2 w-full p-2 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition-colors text-sm sm:text-base"
         >
           Add Comment
         </button>

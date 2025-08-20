@@ -114,25 +114,28 @@ const TaskPage: React.FC = () => {
  };
 
  if (loading) {
-  return <div className="text-white text-center mt-20">Loading tasks...</div>;
+  return <div className="text-white text-center mt-10 sm:mt-20 text-sm sm:text-base">Loading tasks...</div>;
  }
 
  if (error) {
-  return <div className="text-red-500 text-center mt-20">Error: {error}</div>;
+  return <div className="text-red-500 text-center mt-10 sm:mt-20 text-sm sm:text-base px-4">Error: {error}</div>;
  }
 
  return (
-  <div className="container mx-auto p-4">
-   <div className="flex justify-between items-center mb-6">
-    <h1 className="text-3xl font-bold text-white">Tasks</h1>
+  <div className="container mx-auto p-3 sm:p-4 lg:p-6 max-w-7xl">
+   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0">
+    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Tasks</h1>
     {isAdmin && (
-     <Button onClick={handleCreateTask} className="bg-purple-600 hover:bg-purple-700 text-white">
+     <Button 
+      onClick={handleCreateTask} 
+      className="bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto text-sm sm:text-base py-2 px-4"
+     >
       Create New Task
      </Button>
     )}
    </div>
 
-   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
     {tasks.length > 0 ? (
      tasks.map((task) => (
       <TaskCard
@@ -144,7 +147,9 @@ const TaskPage: React.FC = () => {
       />
      ))
     ) : (
-     <p className="text-gray-400">No tasks found.</p>
+     <div className="col-span-full text-center py-8 sm:py-12">
+      <p className="text-gray-400 text-sm sm:text-base">No tasks found.</p>
+     </div>
     )}
    </div>
 
