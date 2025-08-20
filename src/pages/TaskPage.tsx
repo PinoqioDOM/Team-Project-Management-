@@ -153,7 +153,7 @@ const TaskPage: React.FC = () => {
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}
         onTaskCreated={fetchTasks}
-        projectId=""
+        projectId={null}
       />
 
       {selectedTask && (

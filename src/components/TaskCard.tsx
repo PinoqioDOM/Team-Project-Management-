@@ -27,9 +27,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onStatusUpdate, onAssi
   return (
     <Card className="bg-gray-800 border-gray-700">
       <CardHeader>
-        <CardTitle className="text-white text-sm">{task.title}</CardTitle>
+        <CardTitle className="text-white text-sm">Title:{task.title}</CardTitle>
         <Badge className={getStatusColor(task.status)}>
-          {task.status.replace('_', ' ')}
+          Description:{task.status.replace('_', ' ')}
         </Badge>
       </CardHeader>
       <CardContent>
@@ -68,7 +68,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onStatusUpdate, onAssi
         )}
         
         {canEditTask && (
-          <div className="mt-2 flex gap-2"> 
+          <div className="mt-2 flex flex-col gap-2"> 
             <Button
               size="sm"
               className="w-full"

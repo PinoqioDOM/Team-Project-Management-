@@ -7,7 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 import { usePermissions } from "../hooks/usePermissions";
 
 interface CreateTaskProps {
-  projectId: string;
+  projectId: string | null;
   onOpenChange: (open: boolean) => void;
   onTaskCreated: (taskId: string) => void;
   open: boolean;
@@ -70,7 +70,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({ projectId, onOpenChange, onTask
           status: "todo",
           project_id: projectId,
           created_by: userData.id,
-          assigned_to: assignedTo || userData.id,
+          assigned_to: assignedTo ? assignedTo : userData.id,
         }])
         .select('id');
 

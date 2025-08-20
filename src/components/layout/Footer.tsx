@@ -5,7 +5,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0">
           <div className="flex flex-col items-center space-y-2">
             <span className="text-purple-400 font-bold text-lg">OctariNox</span>
-            <span className="text-slate-400 text-sm">© 2024 All rights reserved</span>
+            <span className="text-slate-400 text-sm">© 2023 All rights reserved</span>
           </div>
         </div>
       </div>
