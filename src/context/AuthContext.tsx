@@ -6,7 +6,6 @@ interface UserData {
   role?: string;
   id?: string;
 }
-
 interface AuthContextType {
   session: Session | null;
   userData: UserData | null;
