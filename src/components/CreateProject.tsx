@@ -22,7 +22,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenC
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [dueDate, setDueDate] = useState<Date | undefined>(undefined); // შეცვლილია
+  const [dueDate, setDueDate] = useState<Date | undefined>(undefined); 
 
   const { isAdmin } = usePermissions();
 
@@ -41,7 +41,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenC
     try {
       const { data, error } = await supabase
         .from("projects")
-        .insert([{ name, description, due_date: dueDate }]) // შეცვლილია
+        .insert([{ name, description, due_date: dueDate }])
         .select('id'); 
       if (error) {
         throw error;
@@ -52,7 +52,7 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenC
         setSuccess("Project created successfully!");
         setName("");
         setDescription("");
-        setDueDate(undefined); // განახლებულია
+        setDueDate(undefined); 
         onProjectCreated(newProjectId);
         onOpenChange(false);
       } else {
@@ -101,7 +101,6 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenC
               className="w-full bg-gray-800 text-purple-200 border border-purple-500 rounded-md p-2 mt-1"
             />
           </div>
-          {/* აქ ემატება კალენდარი */}
           <div>
             <label className="block text-sm font-medium text-purple-300">
               ბოლო ვადა
@@ -124,7 +123,6 @@ const CreateProject: React.FC<CreateProjectProps> = ({ onProjectCreated, onOpenC
                   mode="single"
                   selected={dueDate}
                   onSelect={setDueDate}
-                  initialFocus
                 />
               </PopoverContent>
             </Popover>

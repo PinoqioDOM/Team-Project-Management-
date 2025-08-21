@@ -32,7 +32,7 @@ const Header: React.FC = () => {
         <h1 className="text-3xl font-semibold text-purple-400">OctariNox</h1>
       </Link>
 
-      {/* Desktop Navigation Links - Shown on md and above, hidden below md */}
+      {/* Desktop Navigation Links*/}
       <nav className="hidden md:flex space-x-8">
         {session && (
           <>
@@ -49,10 +49,10 @@ const Header: React.FC = () => {
         )}
       </nav>
 
-      {/* User Info and Menu Toggle (Hamburger for mobile, User Initial for desktop) */}
+      {/* User Info and Menu Toggle */}
       {session ? (
         <div className="flex items-center space-x-4 relative">
-          {/* User Name and Role (Desktop only, shown on md and above) */}
+          {/* User Name and Role (Desktop only) */}
           <div className="hidden md:flex flex-col items-end">
             <span className="text-purple-300 font-medium">{userData?.name || "User"}</span>
             <span className="text-sm text-purple-500">{userData?.role || "Member"}</span>

@@ -13,8 +13,8 @@ const App: React.FC = () => {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}> // Use Layout as the parent route
-            <Route index element={<Navigate to="/login" replace />} /> // Default redirect
+          <Route path="/" element={<Layout />}> 
+            <Route index element={<Navigate to="/login" replace />} /> 
             <Route path="/login" element={<Login />} />
             <Route path="/home" element={<Home />} />
             <Route
@@ -41,7 +41,7 @@ const App: React.FC = () => {
                 </ProtectedRoute>
               }
             />
-            <Route path="*" element={<Navigate to="/login" replace />} /> // Catch-all redirect
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Route>
         </Routes>
       </BrowserRouter>
